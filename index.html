@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .calculator {
+            width: 320px; /* Adjusted width */
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .screen {
+            width: 100%;
+            height: 70px; /* Adjusted height */
+            background: black;
+            color: lime;
+            text-align: right;
+            padding: 15px;
+            font-size: 2em; /* Adjusted font size */
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px; /* Adjusted gap */
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 20px; /* Adjusted padding */
+            font-size: 1.5em; /* Adjusted font size */
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #444;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            animation: buttonPress 0.3s ease;
+        }
+
+        @keyframes buttonPress {
+            0% {
+                box-shadow: 0px 0px 15px purple;
+            }
+            100% {
+                box-shadow: none;
+            }
+        }
+
+        /* Special buttons */
+        .del {
+            background-color: #ff5555;
+        }
+
+        .ac {
+            background-color: #ff5555;
+        }
+
+        .equals {
+            background-color: #8a2be2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="screen" id="screen">0</div>
+        <div class="buttons">
+            <button class="ac">AC</button>
+            <button class="del">DEL</button>
+            <button>÷</button>
+            <button>×</button>
+
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+            <button>-</button>
+
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+            <button>+</button>
+
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+            <button class="equals">=</button>
+
+            <button>0</button>
+            <button>.</button>
+        </div>
+    </div>
+
+    <script>
+        const screen = document.getElementById('screen');
+        const buttons = document.querySelectorAll('.buttons button');
+
+        let currentInput = '';
+        let operator = '';
+        let firstOperand = '';
+        let secondOperand = '';
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.textContent;
+
+                if (value === 'AC') {
+                    // Clear everything
+                    currentInput = '';
+                    operator = '';
+                    firstOperand = '';
+                    secondOperand = '';
+                    screen.textContent = '0';
+                } else if (value === 'DEL') {
+                    // Delete last character
+                    currentInput = currentInput.slice(0, -1);
+                    screen.textContent = currentInput || '0';
+                } else if (value === '=') {
+                    // Perform calculation
+                    if (operator && firstOperand && currentInput) {
+                        secondOperand = currentInput;
+                        const result = calculate(firstOperand, secondOperand, operator);
+                        screen.textContent = result;
+                        currentInput = result;
+                        operator = '';
+                        firstOperand = '';
+                        secondOperand = '';
+                    }
+                } else if (['+', '-', '×', '÷'].includes(value)) {
+                    // Set operator
+                    if (currentInput) {
+                        firstOperand = currentInput;
+                        operator = value;
+                        currentInput = '';
+                    }
+                } else {
+                    // Append number or decimal
+                    currentInput += value;
+                    screen.textContent = currentInput;
+                }
+            });
+        });
+
+        function calculate(first, second, operator) {
+            const num1 = parseFloat(first);
+            const num2 = parseFloat(second);
+
+            switch (operator) {
+                case '+':
+                    return (num1 + num2).toString();
+                case '-':
+                    return (num1 - num2).toString();
+                case '×':
+                    return (num1 * num2).toString();
+                case '÷':
+                    return (num1 / num2).toString();
+                default:
+                    return '0';
+            }
+        }
+    </script>
+</body>
+</html>
